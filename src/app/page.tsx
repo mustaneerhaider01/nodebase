@@ -1,12 +1,17 @@
-import { Button } from "@/components/ui/button";
-import prisma from "@/lib/db";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
+import Client from "./client";
+import { Suspense } from "react";
 
 const Page = async () => {
-  const users = await prisma.user.findMany();
+  prefetch(trpc.getUsers.queryOptions());
 
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center">
-      {JSON.stringify(users, null, 2)}
+      <HydrateClient>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Client />
+        </Suspense>
+      </HydrateClient>
     </div>
   );
 };
